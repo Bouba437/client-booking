@@ -1,0 +1,45 @@
+.login {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* cela centrerait verticalement le contenu */
+}
+
+.lContainer {
+    width: 80%; 
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.lInput, .lButton {
+    display: block;
+    width: 100%;
+    margin-bottom: 10px;
+    padding: 10px;
+    border-radius: 5px;
+    border: none;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    gap: 10;
+}
+  
+.lButton {
+    background-color: #0071c2;
+    color: #fff;
+    cursor: pointer;
+}
+
+
+/* .lInput {
+    height: 30px;
+    padding: 10px;
+}
+
+.lButton {
+    border: none;
+    padding: 10px 20px;
+    background-color: #0071c2;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 5px;
+} */
