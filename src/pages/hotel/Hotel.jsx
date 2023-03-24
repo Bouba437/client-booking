@@ -12,9 +12,11 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { useState } from "react";
 import useFetch from "../../hooks/useFetch";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { SearchContext } from "../../context/SearchContext";
 import { useContext } from "react";
+import { AuthContext } from "../../context/AuthContext";
+import Reserve from "../../components/reserve/Reserve";
 
 
 const Hotel = () => {
@@ -23,8 +25,11 @@ const Hotel = () => {
 
   const [slideNumber, setSlideNumber] = useState(0);
   const [open, setOpen] = useState(false);
+  const [openModal, setOpenModal] = useState(false);
 
   const { data, loading, error, refetch } = useFetch(`/hotels/find/${id}`);
+  const { user } = useContext(AuthContext);
+  const navigate = useNavigate();
 
   const {dates, options} = useContext(SearchContext);
 
@@ -35,7 +40,8 @@ const Hotel = () => {
     return diffDays;
   }
 
-  const days = dayDifference(dates[0].endDate, dates[0].startDate);
+  // const days = dayDifference(dates[0].endDate, dates[0].startDate);
+  const days = dates && dates[0] ? dayDifference(dates[0].endDate, dates[0].startDate) : 0;
 
   const handleOpen = (i) => {
     setSlideNumber(i);
@@ -53,6 +59,14 @@ const Hotel = () => {
 
     setSlideNumber(newSlideNumber)
   };
+
+  const handleClick = () => {
+    if(user) {
+      setOpenModal(true)
+    } else {
+      navigate("/login");
+    }
+  }
 
   return (
     <div>
@@ -125,13 +139,15 @@ const Hotel = () => {
               <h2>
                 <b>${days * data.cheapestPrice * options.room}</b> ({days} nuits)
               </h2>
-              <button>Réservez maintenant!</button>
+              <button onClick={handleClick}>Réservez maintenant!</button>
             </div>
           </div>
         </div>
         <MailList />
         <Footer />
-      </div>)}
+      </div>
+      )}
+      {openModal && <Reserve setOpen={setOpenModal} hotelId={id} />}
     </div>
   );
 };
