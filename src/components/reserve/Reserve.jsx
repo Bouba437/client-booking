@@ -4,6 +4,8 @@ import { useContext, useState } from "react";
 import useFetch from "../../hooks/useFetch";
 import { SearchContext } from "../../context/SearchContext";
 import "./reserve.css";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const Reserve = ({setOpen, hotelId}) => {
 
@@ -40,9 +42,21 @@ const Reserve = ({setOpen, hotelId}) => {
         const value = e.target.value;
         setSelectedRooms(checked ? [...selectedRooms, value] : selectedRooms.filter(item => item !== value))
     };
-    
-    const handleClick = () => {
 
+    const navigate = useNavigate();
+    
+    const handleClick = async () => {
+        try {
+                await Promise.all(selectedRooms.map(roomId => {
+                    const res = axios.put(`/rooms/availability/${roomId}`, {dates: alldates});
+                    return res.data
+                })
+            );
+            setOpen(false);
+            navigate("/");
+        } catch (err) {
+            
+        }
     }
     
     return (
@@ -61,14 +75,16 @@ const Reserve = ({setOpen, hotelId}) => {
                             </div>
                             <div className="rPrice">{item.price}</div>
                         </div>
-                        {item.roomNumbers.map(roomNumber=>(
-                            <div className="room">
-                                <label htmlFor="">{roomNumber.number}</label>
-                                <input type="checkbox" value={roomNumber._id} onChange={handleSelect} 
-                                    disabled={!isAvailable(roomNumber)}
-                                />
-                            </div>
-                        ))}
+                        <div className="rSelectRooms">
+                            {item.roomNumbers.map(roomNumber=>(
+                                <div className="room">
+                                    <label htmlFor="">{roomNumber.number}</label>
+                                    <input type="checkbox" value={roomNumber._id} onChange={handleSelect} 
+                                        disabled={!isAvailable(roomNumber)}
+                                    />
+                                </div>
+                            ))}
+                        </div>
                     </div>
                 ))}
                 <button onClick={handleClick} className="rButton">Réserver maintenant!</button>
